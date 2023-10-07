@@ -32,8 +32,6 @@ const register = async (req, res) => {
     }
 }
 
-
-
 const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -61,24 +59,65 @@ const forget = async (req, res) => {
 
         const databaseQuery = new DatabaseQueryServices();
         const result = await databaseQuery.getOne(User, { email: req.body.email })
-        console.log(result)
         if (typeof result == "string") {
             return res.status(401).json({ error: true, message: "User dose not exist" });
         } else {
+            const authservies = new AuthServices();
+            const forgetResult = await authservies.forget(email, result.id, db)
+            const html = `please <a href="http://localhost:3000/reset?token=${forgetResult.token}" >Click here</a> <br/> and you this<br/> Code: ${forgetResult.code}`
+
             let payload = {
                 from: "yea13sin@gmail.com",
-                to: 'mdyeasina40@gmail.com',
+                to: result.email,
                 subject: "forget password",
-                html: "this user forget  his password",
+                html: html,
             }
             const response = await sendMail(config, payload)
-            console.log(response, "send mail")
-            return res.status(200).json({ error: false, result: result });
+            return res.status(200).json({ error: false, message: "Email Sent", result: { token: forgetResult.token, code: forgetResult.code } });
         }
-
-
     }
 }
+
+const resetPassword = async (req, res) => {
+    const { token, code, password } = req.body;
+    if (!password) {
+        return res.status(401).json({
+            error: true,
+            message: "Password is required"
+        })
+    }
+    if (!token) {
+        return res.status(401).json({
+            error: true,
+            message: "Invaild Token"
+        })
+    } else {
+        const Token = db.token;
+        const result = await Token.findOne({ where: { token: token } })
+        if (!result) {
+            return res.status(401).json({
+                error: true,
+                message: "Invaild Token"
+            })
+        } else if (result.code != code) {
+            return res.status(401).json({
+                error: true,
+                message: "Invaild code"
+            })
+        }
+        // console.log(result, "result")
+
+        const authservies = new AuthServices();
+        const resetResult = await authservies.reset(db, result, password)
+        if (typeof resetResult == "string") {
+            return res.status(401).json({ error: true, message: resetResult })
+        } else {
+            return res.status(201).json({ error: false, result: resetResult })
+        }
+    }
+
+}
+
 
 const check = async (req, res) => {
     try {
@@ -106,4 +145,4 @@ const check = async (req, res) => {
 }
 
 
-module.exports = { login, register, forget, check }
+module.exports = { login, register, forget, resetPassword, check }

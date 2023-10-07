@@ -1,4 +1,8 @@
+const JwtServices = require("./JwtServices");
 const PasswordService = require("./PasswordService");
+const { sqlDateTimeFormat } = require("./UtilsServices");
+
+
 
 module.exports = class AuthServices {
     async login(User, body) {
@@ -43,5 +47,46 @@ module.exports = class AuthServices {
         } catch (error) {
             return error.message;
         }
+    }
+    async forget(email, userId, db) {
+        const Token = db.token;
+        let tomorrow = new Date();
+        tomorrow.setHours(new Date().getHours() + 1);
+        const code = Math.floor(Math.random() * 1000000);
+        const token = JwtServices.generateString(50)
+        const payload = {
+            code: code,
+            token: token,
+            type: 0,
+            data: '{"email": "' + email + '", "token": "' + token + '", "code": "' + code + '"}',
+            user_id: userId,
+            status: 1,
+            expire_at: sqlDateTimeFormat(tomorrow),
+        }
+        const result = await Token.create(payload)
+        return { ...payload, code, token: token }
+    }
+    async reset(db, result, password) {
+        const Token = db.token;
+        const User = db.users;
+        try {
+            const exist = await User.findOne({ where: { id: result.user_id } });
+            if (exist) {
+                const hashPassword = await PasswordService.hash(password);
+                const data = await User.update({ password: hashPassword }, { where: { id: exist.id } });
+                if (data) {
+                    await Token.destroy({ where: { id: result.id } });
+                    return data[0];
+                } else {
+                    throw new Error("Password Update Failed")
+                }
+            } else {
+                throw new Error("Invaild User")
+            }
+        } catch (error) {
+            console.log(error, 'error')
+            return error.message
+        }
+
     }
 }

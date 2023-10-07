@@ -1,28 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define("User", {
-        first_name: {
+    const Token = sequelize.define("Token", {
+        token: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        last_name: {
-            type: DataTypes.STRING,
-            // allowNull: false
+        code: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         },
-        // username: {
-        //     type: DataTypes.TEXT,
-        //     allowNull: false,
-        //     unique: true
-        // },
-        email: {
+        data: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        role: {
-            type: DataTypes.STRING,
+        user_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         status: {
@@ -30,13 +21,18 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false,
             // allowNull: false
         },
-        verify: {
+        type: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             // allowNull: false
         },
+        expire_at: {
+            type: DataTypes.STRING,
+            defaultValue: false,
+            // allowNull: false
+        },
     }, {
-        tableName: 'users'
+        tableName: 'token'
     });
-    return User;
+    return Token;
 }

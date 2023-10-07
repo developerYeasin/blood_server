@@ -20,6 +20,7 @@ db.sequelize = sequelize;
 
 db.users = require('../models/user')(sequelize, DataTypes)
 db.cms = require('../models/cms')(sequelize, DataTypes)
+db.token = require('../models/token')(sequelize, DataTypes)
 
 db.sequelize.sync({ force: false, alter: true })
 
