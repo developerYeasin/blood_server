@@ -1,3 +1,4 @@
+const config = require("../config");
 const JwtServices = require("../services/JwtServices")
 
 module.exports = function (option) {
@@ -11,7 +12,7 @@ module.exports = function (option) {
                 code: "UNAUTHORIZED"
             })
         } else {
-            const result = JwtServices.verifyAccessToken(token, "yeasin", option)
+            const result = JwtServices.verifyAccessToken(token, config.token_secret, option)
             console.log(result, "re")
             if (!result) {
                 return res.status(401).json({

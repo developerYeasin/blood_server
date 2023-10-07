@@ -38,7 +38,13 @@ module.exports = class AuthServices {
                     password: hashPassword,
                     email: body.email,
                     first_name: body.first_name,
-                    role: body.role
+                    last_name: body.last_name,
+                    role: body.role,
+                    username: body.username,
+                    blood_group: body.blood_group,
+                    blood_group_type: body.blood_group_type,
+                    status: body.status,
+                    number: body.number,
                 })
                 await jane.save();
                 console.log(jane)

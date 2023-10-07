@@ -18,10 +18,10 @@ let db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.users = require('../models/user')(sequelize, DataTypes)
 db.cms = require('../models/cms')(sequelize, DataTypes)
 db.token = require('../models/token')(sequelize, DataTypes)
+db.users = require('../models/user')(sequelize, DataTypes)
 
-db.sequelize.sync({ force: false, alter: true })
+db.sequelize.sync({ force: false, alter: true });
 
 module.exports = db;

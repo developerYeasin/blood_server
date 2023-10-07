@@ -1,5 +1,5 @@
 const express = require("express");
-const { login, register, check, forget, resetPassword } = require("../controllers/userControllers");
+const { login, register, check, forget, resetPassword, getAllUser } = require("../controllers/userControllers");
 const TokenMiddleware = require("../middleware/TokenMiddleware");
 
 const router = express.Router();
@@ -8,5 +8,6 @@ router.post('/login', login)
 router.post('/forget', forget)
 router.post('/reset', resetPassword)
 router.post('/check', [TokenMiddleware()], check)
+router.get('/all-user', getAllUser)
 
 module.exports = router;

@@ -8,7 +8,7 @@ const db = require("../utils/database");
 const User = db.users;
 
 const register = async (req, res) => {
-    const { email, password, role, first_name } = req.body;
+    const { email, password, role, first_name, username, last_name } = req.body;
     if (!email || !password || !role || !first_name) {
         res.status(400).json({ error: true, message: "All the field required" })
         // throw new Error("All the field required")
@@ -44,8 +44,8 @@ const login = async (req, res) => {
         if (typeof result == "string") {
             return res.status(401).json({ error: true, message: result });
         } else {
-            const token = JwtServices.createAccessToken({ id: result.id, role: result.role }, 3600, "yeasin")
-            return res.status(200).json({ error: false, result: { ...result, token: token } });
+            const token = JwtServices.createAccessToken({ id: result.id, role: result.role }, config.token_expire, config.token_secret)
+            return res.status(200).json({ error: false, user_id: result.id, token: token, role: result.role, expire_at: config.token_expire });
         }
 
 
@@ -144,5 +144,29 @@ const check = async (req, res) => {
     }
 }
 
+const getAllUser = async (req, res) => {
+    try {
+        // const users = await User.findAll({ attributes: ['first_name', 'last_name', "email"] });
+        const users = await User.findAll({ attributes: { exclude: ['password'] } });
+        if (users) {
+            return res.status(200).json({
+                error: false,
+                list: users
+            })
+        } else {
+            return res.status(401).json({
+                error: true,
+                message: "Something Wrong"
+            })
+        }
 
-module.exports = { login, register, forget, resetPassword, check }
+    } catch (error) {
+        return res.status(401).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
+
+module.exports = { login, register, forget, resetPassword, check, getAllUser }
