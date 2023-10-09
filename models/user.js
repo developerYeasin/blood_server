@@ -26,12 +26,28 @@ module.exports = (sequelize, DataTypes) => {
             // allowNull: false
         },
         blood_group: {
-            type: DataTypes.ENUM('A', 'B', 'O', 'AB'),
+            type: DataTypes.ENUM('a', 'b', 'o', 'ab'),
             allowNull: false
         },
         blood_group_type: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        last_blood_donate: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        next_blood_donate: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        profile: {
+            type: DataTypes.STRING,
+            // allowNull: false
+        },
+        cover: {
+            type: DataTypes.STRING,
+            // allowNull: false
         },
         password: {
             type: DataTypes.STRING,
