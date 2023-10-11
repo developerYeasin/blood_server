@@ -21,7 +21,7 @@ module.exports = function (option) {
                     code: "TOKEN_EXPIRED"
                 })
             } else {
-                req.user_id = result.user_id;
+                req.user_id = result.id;
                 req.role = result.role;
                 next()
             }

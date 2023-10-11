@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         username: {
             type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
+            // allowNull: false,
+            // unique: true
         },
         email: {
             type: DataTypes.STRING,
@@ -26,13 +26,13 @@ module.exports = (sequelize, DataTypes) => {
             // allowNull: false
         },
         blood_group: {
-            type: DataTypes.ENUM('a', 'b', 'o', 'ab'),
+            type: DataTypes.ENUM('a', 'b', 'o', 'ab', 'a-', 'b-', 'o-', 'ab-'),
             allowNull: false
         },
-        blood_group_type: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+        // blood_group_type: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false
+        // },
         last_blood_donate: {
             type: DataTypes.STRING,
             allowNull: false

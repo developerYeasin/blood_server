@@ -1,6 +1,6 @@
 const JwtServices = require("./JwtServices");
 const PasswordService = require("./PasswordService");
-const { sqlDateTimeFormat } = require("./UtilsServices");
+const { sqlDateTimeFormat, sqlDateFormat, sqlLastDateFormat } = require("./UtilsServices");
 
 
 
@@ -33,7 +33,6 @@ module.exports = class AuthServices {
                 throw new Error("User exists");
             } else {
                 const hashPassword = await PasswordService.hash(body.password);
-                console.log(hashPassword, "hashPassword")
                 const jane = User.build({
                     password: hashPassword,
                     email: body.email,
@@ -45,9 +44,11 @@ module.exports = class AuthServices {
                     blood_group_type: body.blood_group_type,
                     status: body.status,
                     number: body.number,
+                    last_blood_donate: sqlDateFormat(body.last_blood_donate),
+                    next_blood_donate: sqlLastDateFormat(body.last_blood_donate),
                 })
                 await jane.save();
-                console.log(jane)
+                console.log(jane, "jane")
                 return jane.toJSON()
             }
         } catch (error) {

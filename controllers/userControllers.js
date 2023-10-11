@@ -23,9 +23,13 @@ const register = async (req, res) => {
                 message: result
             });
         } else {
+            const token = JwtServices.createAccessToken({ id: result.id, role: result.role }, config.token_expire, config.token_secret)
             res.status(200).json({
                 error: false,
-                result: result
+                user_id: result.id,
+                token: token,
+                role: result.role,
+                expire_at: config.token_expire
             })
         }
 
@@ -51,6 +55,23 @@ const login = async (req, res) => {
 
     }
 }
+
+const getUserInfo = async (req, res) => {
+    console.log(req.user_id, "user_id")
+    try {
+        const databaseQuery = new DatabaseQueryServices();
+        const result = await databaseQuery.getOne(User, { id: req.user_id })
+        if (typeof result == "string") {
+            return res.status(401).json({ error: true, message: "User dose not exist" });
+        } else {
+            res.status(200).json({ error: false, model: result })
+        }
+    } catch (error) {
+        res.status(401).json({ error: true, message: error.message })
+    }
+}
+
+
 const forget = async (req, res) => {
     const { email, password } = req.body;
     if (!email) {
@@ -169,4 +190,4 @@ const getAllUser = async (req, res) => {
 }
 
 
-module.exports = { login, register, forget, resetPassword, check, getAllUser }
+module.exports = { login, register, forget, resetPassword, check, getAllUser, getUserInfo }
