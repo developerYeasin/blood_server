@@ -36,6 +36,14 @@ const register = async (req, res) => {
     }
 }
 
+const updateUser = async (rea, res) => {
+    try {
+        res.status(200).json({ error: false, result: "Okay" })
+    } catch (error) {
+        res.status(200).json({ error: false, message: error.message })
+    }
+}
+
 const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -190,4 +198,4 @@ const getAllUser = async (req, res) => {
 }
 
 
-module.exports = { login, register, forget, resetPassword, check, getAllUser, getUserInfo }
+module.exports = { login, register, forget, resetPassword, check, getAllUser, getUserInfo, updateUser }
