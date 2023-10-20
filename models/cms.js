@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Cms = sequelize.define("User", {
+    const Cms = sequelize.define("Cms", {
         content_key: {
             type: DataTypes.STRING,
         },

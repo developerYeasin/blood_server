@@ -21,8 +21,23 @@ db.sequelize = sequelize;
 db.cms = require('../models/cms')(sequelize, DataTypes)
 db.token = require('../models/token')(sequelize, DataTypes)
 db.users = require('../models/user')(sequelize, DataTypes)
+db.chat = require('../models/chat')(sequelize, DataTypes)
+db.message = require('../models/message')(sequelize, DataTypes)
 
-db.sequelize.sync({ force: false });
+db.users.hasOne(db.message, {
+    foreignKey: 'id'
+});
+db.message.belongsTo(db.users, {
+    foreignKey: 'sender'
+});
+db.chat.hasOne(db.message, {
+    foreignKey: 'id'
+});
+db.message.belongsTo(db.chat, {
+    foreignKey: 'chat'
+});
+
+db.sequelize.sync({ force: false, alter: false });
 // , alter: true 
 
 module.exports = db;

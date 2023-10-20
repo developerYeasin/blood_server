@@ -8,9 +8,9 @@ const db = require("../utils/database");
 const User = db.users;
 
 const register = async (req, res) => {
-    const { email, password, role, first_name, username, last_name } = req.body;
-    if (!email || !password || !role || !first_name) {
-        res.status(400).json({ error: true, message: "All the field required" })
+    const { email, password, role, name, username } = req.body;
+    if (!email || !password || !role || !name) {
+        res.status(401).json({ error: true, message: "All the field required" })
         // throw new Error("All the field required")
     } else {
 
@@ -18,7 +18,7 @@ const register = async (req, res) => {
         const result = await authservies.register(User, req.body)
         console.log(result, "result")
         if (typeof result == "string") {
-            return res.status(403).json({
+            return res.status(401).json({
                 error: true,
                 message: result
             });
@@ -36,9 +36,15 @@ const register = async (req, res) => {
     }
 }
 
-const updateUser = async (rea, res) => {
+const updateUser = async (req, res) => {
     try {
-        res.status(200).json({ error: false, result: "Okay" })
+        console.log(req.user_id)
+        const { password } = req.body;
+        if (password) {
+            throw new Error("We can't edit password");
+        }
+        const data = await User.update(req.body, { where: { id: req.user_id } });
+        res.status(200).json({ error: false, result: data[0] })
     } catch (error) {
         res.status(200).json({ error: false, message: error.message })
     }
@@ -69,6 +75,20 @@ const getUserInfo = async (req, res) => {
     try {
         const databaseQuery = new DatabaseQueryServices();
         const result = await databaseQuery.getOne(User, { id: req.user_id })
+        if (typeof result == "string") {
+            return res.status(401).json({ error: true, message: "User dose not exist" });
+        } else {
+            res.status(200).json({ error: false, model: result })
+        }
+    } catch (error) {
+        res.status(401).json({ error: true, message: error.message })
+    }
+}
+const getUserById = async (req, res) => {
+    // console.log(req.params.id, "req.params.id")
+    try {
+        const databaseQuery = new DatabaseQueryServices();
+        const result = await databaseQuery.getOne(User, { id: req.params.id })
         if (typeof result == "string") {
             return res.status(401).json({ error: true, message: "User dose not exist" });
         } else {
@@ -175,8 +195,7 @@ const check = async (req, res) => {
 
 const getAllUser = async (req, res) => {
     try {
-        // const users = await User.findAll({ attributes: ['first_name', 'last_name', "email"] });
-        const users = await User.findAll({ attributes: { exclude: ['password'] } });
+        const users = await User.findAll({ where: req.query, attributes: { exclude: ['password'] } });
         if (users) {
             return res.status(200).json({
                 error: false,
@@ -198,4 +217,4 @@ const getAllUser = async (req, res) => {
 }
 
 
-module.exports = { login, register, forget, resetPassword, check, getAllUser, getUserInfo, updateUser }
+module.exports = { login, register, forget, resetPassword, check, getAllUser, getUserInfo, updateUser, getUserById }

@@ -36,8 +36,7 @@ module.exports = class AuthServices {
                 const jane = User.build({
                     password: hashPassword,
                     email: body.email,
-                    first_name: body.first_name,
-                    last_name: body.last_name,
+                    name: body.name,
                     role: body.role,
                     username: body.username,
                     blood_group: body.blood_group,
