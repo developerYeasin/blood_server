@@ -12,9 +12,9 @@ const projectMiddleware = require("./middleware/projectMiddleware");
 
 app.use('/images', express.static('./uploads'));
 app.use(cors())
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '100mb' }));
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 app.set("db", db);
 
 app.get("/", (req, res) => {
@@ -28,15 +28,70 @@ app.use('/', message)
 app.use('/', upload)
 
 const port = 8000;
-app.listen(port, () => console.log("open api"));
+const server = app.listen(port, () => console.log("open api"));
 
+const io = require("socket.io")(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
 
-// function newFun(arr) {
-//   let mil = ""
-//   arr.map(item => {
+io.on('connection', (socket) => {
+  // console.log("connected to socket.io");
 
-//   })
-//   return "amid"
-// }
+  socket.on("setup", (userData) => {
+    socket.join(userData);
+    socket.emit("connected");
+  });
+  socket.on('join chat', (chat) => {
+    socket.join(chat)
+  })
+  socket.on("typing", (chat) => socket.in(chat).emit("typing", chat));
+  socket.on("stop typing", (chat) => socket.in(chat).emit("stop typing", chat));
+  socket.on("send", (newMessage) => {
+    // console.log(newMessage)
+    const chat = newMessage.chat;
+    if (!chat.users) return console.log("chat.users not defined");
 
-// console.log(newFun(['ami', 'tumi']))
+    JSON.parse(chat.users).map(user => {
+      if (user == newMessage.sender) return;
+      socket.in(user).emit("update", newMessage);
+      socket.in(user).emit("message recieved", newMessage);
+    })
+  })
+
+  // socket.on('message send', (newMessage) => {
+  //   console.log(message);
+  //   const chat = newMessage.chat;
+  //   if (!chat.users) return console.log("chat.users not defined");
+
+  //   JSON.parse(chat.users).map(user => {
+  //     if (user == newMessage.sender) return;
+  //     socket.in(user).emit("message recieved", newMessage);
+  //   })
+
+  // })
+
+  socket.on('message update', (message) => {
+    const chat = message.Chat;
+
+    if (!chat.users) return console.log("chat.users not defined");
+    JSON.parse(chat.users).map(user => {
+      if (user == message.nowViewer) return;
+      socket.in(user).emit("update", message);
+    })
+
+  });
+  socket.on('message view', (message) => {
+    const chat = message.Chat;
+    if (!chat.users) return console.log("chat.users not defined");
+    JSON.parse(chat.users).map(user => {
+      if (user == message.nowViewer) return;
+      socket.in(user).emit("message recieved", message);
+    })
+
+  });
+
+})
+

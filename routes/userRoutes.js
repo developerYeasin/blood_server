@@ -11,6 +11,6 @@ router.put('/update-user', [TokenMiddleware()], updateUser)
 router.post('/forget', forget)
 router.post('/reset', resetPassword)
 router.post('/check', [TokenMiddleware()], check)
-router.get('/all-user', getAllUser)
+router.post('/all-user', getAllUser)
 
 module.exports = router;

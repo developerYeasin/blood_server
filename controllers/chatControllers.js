@@ -2,7 +2,7 @@
 
 const CreateOrFetchChat = async (req, res) => {
     const { user } = req.body;
-    console.log(user, "user")
+    // console.log(user, "user")
     if (!user) {
         return res.status(401).json({ error: true, message: "User id required" })
     }
@@ -18,7 +18,7 @@ const CreateOrFetchChat = async (req, res) => {
                 }
             })
         }
-        console.log(isExist, "isExist")
+        // console.log(isExist, "isExist")
 
         if (isExist.length > 0) {
             return res.status(200).json({ error: false, model: isExist[0] })
@@ -32,7 +32,7 @@ const CreateOrFetchChat = async (req, res) => {
                 "isGroupChat": 0
             }
             const jane = await Chat.create({ ...data, creator: req.user_id })
-            console.log(jane, "jane")
+            // console.log(jane, "jane")
             return res.status(200).json({ error: false, model: jane })
         }
 
@@ -41,12 +41,26 @@ const CreateOrFetchChat = async (req, res) => {
         return res.status(401).json({ error: true, message: error.message })
     }
 }
+const updateChatById = async (req, res) => {
+    try {
+        // console.log(req.params.id, 'req.params')
+        const Chat = req.db.chat;
+        const allChat = await Chat.update(req.body, {
+            where: { id: Number(req.params.id) },
+        });
+        // console.log(allChat, "allChat")
+
+        res.status(200).json({ error: false, message: allChat })
+    } catch (error) {
+        res.status(401).json({ error: true, message: error.message })
+    }
+}
 const getAll = async (req, res) => {
     try {
         const Chat = req.db.chat;
         const allChat = await Chat.findAll({
             order: [
-                ['id', 'DESC'],
+                ['updatedAt', 'DESC'],
             ]
         });
 
@@ -63,6 +77,20 @@ const getAll = async (req, res) => {
         res.status(401).json({ error: true, message: error.message })
     }
 }
+const getChatById = async (req, res) => {
+    try {
+        console.log(req.params.id, 'req.params')
+        const Chat = req.db.chat;
+        const allChat = await Chat.findOne({
+            where: { id: Number(req.params.id) },
+        });
+        // console.log(allChat, "allChat")
+
+        res.status(200).json({ error: false, model: allChat })
+    } catch (error) {
+        res.status(401).json({ error: true, message: error.message })
+    }
+}
 
 
-module.exports = { CreateOrFetchChat, getAll };
+module.exports = { CreateOrFetchChat, getAll, getChatById, updateChatById };

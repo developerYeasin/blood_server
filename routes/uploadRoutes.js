@@ -1,5 +1,5 @@
 const express = require("express");
-const { uploadToLocal } = require("../controllers/uploadControllers");
+const { uploadToLocal, uploadBase64ToImageKit } = require("../controllers/uploadControllers");
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -17,5 +17,6 @@ const upload = multer({ storage: storage })
 
 const router = express.Router();
 router.post('/upload', upload.single('file'), uploadToLocal)
+router.post('/upload/base64', uploadBase64ToImageKit)
 
 module.exports = router;

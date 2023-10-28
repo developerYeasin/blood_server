@@ -13,7 +13,7 @@ module.exports = function (option) {
             })
         } else {
             const result = JwtServices.verifyAccessToken(token, config.token_secret, option)
-            console.log(result, "re")
+            // // console.log(result, "re")
             if (!result) {
                 return res.status(401).json({
                     error: true,

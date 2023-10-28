@@ -16,7 +16,7 @@ const register = async (req, res) => {
 
         const authservies = new AuthServices();
         const result = await authservies.register(User, req.body)
-        console.log(result, "result")
+        // console.log(result, "result")
         if (typeof result == "string") {
             return res.status(401).json({
                 error: true,
@@ -38,7 +38,7 @@ const register = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        console.log(req.user_id)
+        // console.log(req.user_id)
         const { password } = req.body;
         if (password) {
             throw new Error("We can't edit password");
@@ -58,7 +58,7 @@ const login = async (req, res) => {
 
         const authservies = new AuthServices();
         const result = await authservies.login(User, req.body)
-        // console.log(result)
+        // // console.log(result)
         if (typeof result == "string") {
             return res.status(401).json({ error: true, message: result });
         } else {
@@ -71,7 +71,6 @@ const login = async (req, res) => {
 }
 
 const getUserInfo = async (req, res) => {
-    console.log(req.user_id, "user_id")
     try {
         const databaseQuery = new DatabaseQueryServices();
         const result = await databaseQuery.getOne(User, { id: req.user_id })
@@ -85,7 +84,7 @@ const getUserInfo = async (req, res) => {
     }
 }
 const getUserById = async (req, res) => {
-    // console.log(req.params.id, "req.params.id")
+    // // console.log(req.params.id, "req.params.id")
     try {
         const databaseQuery = new DatabaseQueryServices();
         const result = await databaseQuery.getOne(User, { id: req.params.id })
@@ -154,7 +153,7 @@ const resetPassword = async (req, res) => {
                 message: "Invaild code"
             })
         }
-        // console.log(result, "result")
+        // // console.log(result, "result")
 
         const authservies = new AuthServices();
         const resetResult = await authservies.reset(db, result, password)
@@ -195,11 +194,27 @@ const check = async (req, res) => {
 
 const getAllUser = async (req, res) => {
     try {
-        const users = await User.findAll({ where: req.query, attributes: { exclude: ['password'] } });
+
+        const { page, limit } = req.body;
+        const users = await User.findAll({
+            limit: limit, // Number of items per page
+            offset: (page - 1) * limit,
+            where: req.body.payload,
+            order: [
+                ['next_blood_donate', 'DESC'],
+            ], attributes: { exclude: ['password'] }
+        });
+        const total = await User.count({
+            where: req.body.payload,
+        })
+
         if (users) {
             return res.status(200).json({
                 error: false,
-                list: users
+                list: users,
+                page: page,
+                limit: limit,
+                total: total
             })
         } else {
             return res.status(401).json({

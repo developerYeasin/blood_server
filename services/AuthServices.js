@@ -8,13 +8,13 @@ module.exports = class AuthServices {
     async login(User, body) {
         try {
             const jane = await User.findOne({ where: { email: body.email } });
-            // console.log(jane)
+            // // console.log(jane)
             if (!jane) {
                 throw new Error("User dose not exist")
             } else {
-                // console.log({ id: jane.id, email: jane.email })
+                // // console.log({ id: jane.id, email: jane.email })
                 const passwordValid = await PasswordService.compareHash(body.password, jane.password)
-                console.log(passwordValid, "passwordValid")
+                // console.log(passwordValid, "passwordValid")
                 if (!passwordValid) {
                     throw new Error("Invalid Password")
                 }
@@ -28,7 +28,7 @@ module.exports = class AuthServices {
 
         try {
             const exist = await User.findOne({ where: { email: body.email } })
-            // console.log(exist, "exist")
+            // // console.log(exist, "exist")
             if (exist) {
                 throw new Error("User exists");
             } else {
@@ -47,7 +47,7 @@ module.exports = class AuthServices {
                     next_blood_donate: sqlLastDateFormat(body.last_blood_donate),
                 })
                 await jane.save();
-                console.log(jane, "jane")
+                // console.log(jane, "jane")
                 return jane.toJSON()
             }
         } catch (error) {
@@ -90,7 +90,7 @@ module.exports = class AuthServices {
                 throw new Error("Invaild User")
             }
         } catch (error) {
-            console.log(error, 'error')
+            // console.log(error, 'error')
             return error.message
         }
 

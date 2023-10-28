@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 module.exports = {
     createAccessToken: function (payload, expireIn, secret) {
         return jwt.sign(payload, secret, {
-            expiresIn: Number(expireIn),
+            // expiresIn: Number(expireIn),
             algorithm: "HS256"
         });
     },
@@ -14,7 +14,7 @@ module.exports = {
             const decoded = jwt.verify(token, key, option);
             return decoded;
         } catch (error) {
-            console.log(error.message, "verifyAccessToken")
+            // console.log(error.message, "verifyAccessToken")
             return false
         }
     },
