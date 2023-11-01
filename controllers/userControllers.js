@@ -202,7 +202,8 @@ const getAllUser = async (req, res) => {
             where: req.body.payload,
             order: [
                 ['next_blood_donate', 'DESC'],
-            ], attributes: { exclude: ['password'] }
+            ],
+            attributes: { exclude: ['password'] }
         });
         const total = await User.count({
             where: req.body.payload,
