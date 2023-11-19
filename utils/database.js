@@ -37,7 +37,7 @@ db.message.belongsTo(db.chat, {
     foreignKey: 'chat'
 });
 
-db.sequelize.sync({ force: false, alter: false });
+// db.sequelize.sync({ force: false, alter: false });
 // , alter: true 
 
 module.exports = db;
