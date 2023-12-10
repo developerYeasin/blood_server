@@ -9,6 +9,8 @@ const cors = require('cors')
 const app = express();
 const db = require("./utils/database");
 const projectMiddleware = require("./middleware/projectMiddleware");
+const config = require("./config");
+const startApolloServer = require("./graphql")
 
 app.use('/images', express.static('./uploads'));
 app.use(cors())
@@ -27,7 +29,12 @@ app.use('/', [projectMiddleware()], chat)
 app.use('/', message)
 app.use('/', upload)
 
-const port = 8000;
+
+
+startApolloServer(app, db)
+
+
+const port = config.port;
 const server = app.listen(port, () => console.log("open api"));
 
 const io = require("socket.io")(server, {
