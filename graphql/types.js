@@ -1,6 +1,10 @@
 module.exports = `
+
+scalar Date
+scalar DateTime
+
 type User {
-  id: ID!
+  id: Int
   name: String
   username: String
   email: String
@@ -21,16 +25,27 @@ type User {
 }
 
 type Chat {
-  id: ID!
-  chatName: String
-  creator: String
+      id: Int
+      chatName: String
+      creator: String
       isGroupChat: Int
-      latestMessage: String
+      latestMessage: Int
       groupAdmin: String
       createdAt: String
       updatedAt: String
       users: String
       user: [User]
+      message: Message
+}
+
+type Message {
+    id: Int
+    sender: Int
+    content: String
+    chat: Int,
+    readBy: String
+    createdAt: Date
+    updatedAt: DateTime
 }
 
 type Query {

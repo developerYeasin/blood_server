@@ -15,7 +15,7 @@ module.exports = async (app, db) => {
         context: async ({ req }) => {
             // const token = req.headers.authorization;
             const token = JwtServices.getToken(req);
-            console.log(token, "token")
+            console.log("token >> ",token)
             if (!token) {
                 throw new Error('Invaid Token');
             }
