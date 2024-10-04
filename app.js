@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const db = require("./utils/database");
-const projectMiddleware = require("./middleware/projectMiddleware");
+const projectMiddleware = require("./middleware/ProjectMiddleware");
 const config = require("./config");
 const startApolloServer = require("./graphql");
 
