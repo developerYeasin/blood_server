@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
   `);
 });
 
-app.use("/", users);
+app.use("/", [projectMiddleware()], users);
 app.use("/", cms);
 app.use("/", [projectMiddleware()], chat);
 app.use("/", message);
@@ -103,7 +103,8 @@ io.on("connection", (socket) => {
     JSON.parse(chat.users).map((user) => {
       if (user == newMessage.sender) return;
       socket.in(user).emit("update", newMessage);
-      socket.in(user).emit("message recieved", newMessage);
+      console.log("udpate new message");
+      socket.in(user).emit("message received", newMessage);
     });
   });
 
@@ -130,7 +131,8 @@ io.on("connection", (socket) => {
   });
   socket.on("message view", (message) => {
     const chat = message.Chat;
-    if (!chat.users) return console.log("chat.users not defined");
+    console.log(chat);
+    if (!chat || !chat.users) return console.log("chat.users not defined");
     JSON.parse(chat.users).map((user) => {
       if (user == message.nowViewer) return;
       socket.in(user).emit("message recieved", message);

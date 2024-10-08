@@ -44,5 +44,6 @@ db.message.belongsTo(db.chat, {
 
 // db.sequelize.sync({ force: true });
 // , alter: true
+db.sequelize.sync({ alter: true });
 
 module.exports = db;
